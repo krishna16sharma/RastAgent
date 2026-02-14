@@ -14,6 +14,7 @@ Steps:
 import json
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -35,8 +36,9 @@ def run_pipeline(
     cache_dir: Optional[str] = None,
     chunk_duration: int = 20,
     chunk_overlap: int = 3,
-    model_name: str = "gemini-2.5-pro-preview-06-05",
+    model_name: str = "gemini-3-pro-preview",
     skip_existing: bool = True,
+    max_workers: int = 10,
 ) -> Dict:
     """
     Run the full analysis pipeline on a GoPro video.
@@ -49,6 +51,7 @@ def run_pipeline(
         chunk_overlap: Overlap between chunks in seconds.
         model_name: Gemini model name.
         skip_existing: Skip analysis if cache file already exists.
+        max_workers: Max parallel chunk analyses (default 10).
 
     Returns:
         Dict with keys:
@@ -93,14 +96,16 @@ def run_pipeline(
     chunks = chunk_video(video_path, output_dir, chunk_duration, chunk_overlap)
     print(f"  Created {len(chunks)} chunks")
 
-    # Step 3 & 4: Analyze each chunk + map GPS
-    print("Step 3/6: Analyzing chunks with Gemini...")
+    # Step 3 & 4: Analyze each chunk + map GPS (parallel)
+    print(f"Step 3/6: Analyzing {len(chunks)} chunks with Gemini ({max_workers} workers)...")
     all_hazards = []
     chunk_results = {}
 
-    for chunk in chunks:
+    def _process_chunk(chunk):
+        """Analyze a single chunk and map GPS coordinates."""
         idx = chunk["chunk_index"]
-        print(f"  Analyzing chunk {idx:03d} ({chunk['start_sec']:.1f}s - {chunk['end_sec']:.1f}s)...")
+        t0 = time.time()
+        print(f"  [chunk {idx:03d}] START uploading + analyzing ({chunk['start_sec']:.1f}s - {chunk['end_sec']:.1f}s)...")
 
         try:
             hazards = analyze_chunk(
@@ -111,20 +116,30 @@ def run_pipeline(
                 model_name=model_name,
             )
         except Exception as e:
-            print(f"    ERROR: {e}")
+            print(f"  [chunk {idx:03d}] ERROR after {time.time() - t0:.1f}s: {e}")
             hazards = []
 
-        chunk_results[idx] = hazards
-        print(f"    Found {len(hazards)} hazards")
+        elapsed = time.time() - t0
+        print(f"  [chunk {idx:03d}] DONE in {elapsed:.1f}s — {len(hazards)} hazards found")
+        for h in hazards:
+            print(f"    - {h.get('category', '?')} sev={h.get('severity', '?')}: {h.get('description', '')[:80]}")
 
         # Map to GPS if interpolator available
         if interpolator and hazards:
             hazards = map_hazards_to_gps(hazards, chunk["start_sec"], interpolator)
 
-        all_hazards.extend(hazards)
+        return idx, hazards
 
-        # Rate limiting
-        time.sleep(1)
+    pipeline_t0 = time.time()
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(_process_chunk, chunk): chunk for chunk in chunks}
+
+        for future in as_completed(futures):
+            idx, hazards = future.result()
+            chunk_results[idx] = hazards
+            all_hazards.extend(hazards)
+
+    print(f"  All chunks analyzed in {time.time() - pipeline_t0:.1f}s")
 
     print(f"  Total raw hazards: {len(all_hazards)}")
 
