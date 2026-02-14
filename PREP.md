@@ -27,7 +27,7 @@ GoPro MP4 (video + embedded GPS)
 ┌──────────────────────────────────────────────────────────┐
 │  STEP 3: Gemini Multimodal Analysis (parallel, 10 workers)│
 │  rast_agent/analysis/gemini_client.py                    │
-│  Upload chunk → Gemini 2.5 Pro (JSON mode) → hazard JSON │
+│  Upload chunk → Gemini 3 Pro (JSON mode) → hazard JSON │
 │  Output per chunk: [{category, severity, bbox, action}]  │
 └──────────────────────────┬───────────────────────────────┘
                            ▼
