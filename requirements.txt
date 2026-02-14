@@ -1,5 +1,5 @@
 googlemaps
-google-generativeai
+google-genai
 mcp
 python-dotenv
 requests

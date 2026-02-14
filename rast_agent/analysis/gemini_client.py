@@ -1,31 +1,31 @@
 """
 Gemini API client for RoadSense hazard analysis.
 
-Wraps the google-generativeai SDK to send video chunks for
-hazard detection and generate route summaries.
+Uses the google.genai SDK (Gen AI SDK) to send video chunks
+to Gemini 3 Pro for hazard detection and route summary generation.
 """
 
 import json
 import os
 import time
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Lazy import to avoid import errors if SDK not installed yet
-_genai = None
+_client = None
+
+DEFAULT_MODEL = "gemini-3-pro-preview"
 
 
-def _get_genai():
-    global _genai
-    if _genai is None:
-        import google.generativeai as genai
-        genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-        _genai = genai
-    return _genai
+def _get_client():
+    global _client
+    if _client is None:
+        from google import genai
+        _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    return _client
 
 
 # Prompt file paths
@@ -55,7 +55,7 @@ def analyze_chunk(
     chunk_index: int,
     start_time: float,
     end_time: float,
-    model_name: str = "gemini-2.5-pro-preview-06-05",
+    model_name: str = DEFAULT_MODEL,
 ) -> List[Dict]:
     """
     Send a video chunk to Gemini for hazard analysis.
@@ -70,15 +70,20 @@ def analyze_chunk(
     Returns:
         List of hazard annotation dicts (or empty list).
     """
-    genai = _get_genai()
+    from google.genai import types
+
+    client = _get_client()
 
     # Upload the video file
-    video_file = genai.upload_file(video_path, mime_type="video/mp4")
+    video_file = client.files.upload(
+        file=video_path,
+        config=types.UploadFileConfig(mime_type="video/mp4"),
+    )
 
     # Wait for file to be processed
     while video_file.state.name == "PROCESSING":
         time.sleep(2)
-        video_file = genai.get_file(video_file.name)
+        video_file = client.files.get(name=video_file.name)
 
     if video_file.state.name == "FAILED":
         raise RuntimeError(f"Video upload failed for {video_path}")
@@ -87,14 +92,18 @@ def analyze_chunk(
     system_prompt = _load_prompt(_SYSTEM_PROMPT)
     chunk_prompt = _build_chunk_prompt(chunk_index, start_time, end_time)
 
-    # Create model and generate
-    model = genai.GenerativeModel(
-        model_name=model_name,
-        system_instruction=system_prompt,
-        generation_config={"response_mime_type": "application/json"},
+    # Generate content
+    response = client.models.generate_content(
+        model=model_name,
+        contents=[
+            types.Part.from_uri(file_uri=video_file.uri, mime_type="video/mp4"),
+            chunk_prompt,
+        ],
+        config=types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            response_mime_type="application/json",
+        ),
     )
-
-    response = model.generate_content([video_file, chunk_prompt])
 
     # Parse JSON response
     text = response.text.strip()
@@ -106,7 +115,7 @@ def analyze_chunk(
 
     # Clean up uploaded file
     try:
-        genai.delete_file(video_file.name)
+        client.files.delete(name=video_file.name)
     except Exception:
         pass
 
@@ -115,7 +124,7 @@ def analyze_chunk(
 
 def generate_route_summary(
     hazards: List[Dict],
-    model_name: str = "gemini-2.5-pro-preview-06-05",
+    model_name: str = DEFAULT_MODEL,
 ) -> Dict:
     """
     Generate a route quality summary from all detected hazards.
@@ -127,7 +136,9 @@ def generate_route_summary(
     Returns:
         Route summary dict with quality score, breakdown, briefing.
     """
-    genai = _get_genai()
+    from google.genai import types
+
+    client = _get_client()
 
     system_prompt = _load_prompt(_SYSTEM_PROMPT)
     summary_prompt = _load_prompt(_SUMMARY_PROMPT)
@@ -140,11 +151,13 @@ def generate_route_summary(
         + "\n```"
     )
 
-    model = genai.GenerativeModel(
-        model_name=model_name,
-        system_instruction=system_prompt,
-        generation_config={"response_mime_type": "application/json"},
+    response = client.models.generate_content(
+        model=model_name,
+        contents=full_prompt,
+        config=types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            response_mime_type="application/json",
+        ),
     )
 
-    response = model.generate_content(full_prompt)
     return json.loads(response.text.strip())
