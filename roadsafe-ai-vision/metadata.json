@@ -1,0 +1,7 @@
+{
+  "name": "RoadSafe AI Vision",
+  "description": "Expert road safety analysis tool using AI to detect surface hazards, structural risks, and human factors from video footage.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
