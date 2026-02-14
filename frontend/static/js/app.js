@@ -121,8 +121,9 @@ async function loadReport(filename) {
         hazards = reportData.hazards || [];
         gpsTrack = reportData.gps_track || [];
 
-        // Load video if available
-        const videoName = reportData.video ? reportData.video.split('/').pop() : null;
+        // Load video if available — prefer video_filename, fall back to path basename
+        const videoName = reportData.video_filename
+            || (reportData.video ? reportData.video.split('/').pop() : null);
         if (videoName) {
             const video = document.getElementById('video-player');
             video.src = `/api/video/${videoName}`;

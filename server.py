@@ -19,6 +19,7 @@ app = Flask(
 
 CACHE_DIR = Path(__file__).parent / "cache"
 DATA_DIR = Path(__file__).parent / "data"
+TEST_DIR = Path(__file__).parent / "test"
 
 
 @app.route("/")
@@ -58,11 +59,11 @@ def get_report(filename):
 @app.route("/api/video/<path:filename>")
 def serve_video(filename):
     """Serve video files from cache/chunks/ or data/ directory."""
-    # Try cache/chunks first
-    for base in [CACHE_DIR / "chunks", DATA_DIR, Path(".")]:
+    # Search multiple directories for the video file
+    for base in [CACHE_DIR / "chunks", DATA_DIR, TEST_DIR, Path(".")]:
         full = base / filename
         if full.exists() and full.is_file():
-            return send_file(str(full), mimetype="video/mp4")
+            return send_file(str(full.resolve()), mimetype="video/mp4")
     abort(404)
 
 
