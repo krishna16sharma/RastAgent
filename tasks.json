@@ -1,0 +1,231 @@
+{
+  "project": "RoadSense (RastAgent)",
+  "last_updated": "2026-02-14",
+  "summary": {
+    "total": 24,
+    "completed": 0,
+    "in_progress": 0,
+    "not_started": 24,
+    "blocked": 0
+  },
+  "current_phase": "P1",
+  "current_focus": null,
+  "tasks": [
+    {
+      "id": "P1.1",
+      "task": "Initialize Node.js project with package.json",
+      "status": "not_started",
+      "phase": "P1",
+      "depends_on": [],
+      "notes": ""
+    },
+    {
+      "id": "P1.2",
+      "task": "Create .env template and .gitignore",
+      "status": "not_started",
+      "phase": "P1",
+      "depends_on": ["P1.1"],
+      "notes": ""
+    },
+    {
+      "id": "P1.3",
+      "task": "Build GPS extraction CLI script",
+      "status": "not_started",
+      "phase": "P1",
+      "depends_on": ["P1.1"],
+      "notes": "Wraps existing utils/gopro-parser.js"
+    },
+    {
+      "id": "P1.4",
+      "task": "Implement GPS interpolation module",
+      "status": "not_started",
+      "phase": "P1",
+      "depends_on": ["P1.3"],
+      "notes": ""
+    },
+    {
+      "id": "P1.5",
+      "task": "Test GPS pipeline with sample footage",
+      "status": "not_started",
+      "phase": "P1",
+      "depends_on": ["P1.3", "P1.4"],
+      "notes": ""
+    },
+    {
+      "id": "P2.1",
+      "task": "Implement video chunking with overlap",
+      "status": "not_started",
+      "phase": "P2",
+      "depends_on": ["P1.1"],
+      "notes": "Extend existing chunkVideo() in gopro-parser.js"
+    },
+    {
+      "id": "P2.2",
+      "task": "Create chunk metadata manifest",
+      "status": "not_started",
+      "phase": "P2",
+      "depends_on": ["P2.1"],
+      "notes": ""
+    },
+    {
+      "id": "P2.3",
+      "task": "Validate chunk boundaries preserve telemetry",
+      "status": "not_started",
+      "phase": "P2",
+      "depends_on": ["P2.1"],
+      "notes": ""
+    },
+    {
+      "id": "P3.1",
+      "task": "Write system prompt",
+      "status": "not_started",
+      "phase": "P3",
+      "depends_on": [],
+      "notes": "prompts/system.md"
+    },
+    {
+      "id": "P3.2",
+      "task": "Write chunk analysis prompt",
+      "status": "not_started",
+      "phase": "P3",
+      "depends_on": [],
+      "notes": "prompts/chunk-analysis.md"
+    },
+    {
+      "id": "P3.3",
+      "task": "Write route summary prompt",
+      "status": "not_started",
+      "phase": "P3",
+      "depends_on": [],
+      "notes": "prompts/route-summary.md"
+    },
+    {
+      "id": "P3.4",
+      "task": "Build Gemini API client module",
+      "status": "not_started",
+      "phase": "P3",
+      "depends_on": ["P1.1", "P3.1", "P3.2"],
+      "notes": "pipeline/gemini-client.js"
+    },
+    {
+      "id": "P3.5",
+      "task": "Build analysis orchestrator",
+      "status": "not_started",
+      "phase": "P3",
+      "depends_on": ["P3.4", "P2.2", "P1.4", "P3.6", "P3.7"],
+      "notes": "pipeline/analyze.js — the main pipeline script"
+    },
+    {
+      "id": "P3.6",
+      "task": "Implement hazard deduplication",
+      "status": "not_started",
+      "phase": "P3",
+      "depends_on": ["P1.4"],
+      "notes": "100m GPS proximity + same category"
+    },
+    {
+      "id": "P3.7",
+      "task": "Implement GPS mapping for hazards",
+      "status": "not_started",
+      "phase": "P3",
+      "depends_on": ["P1.4"],
+      "notes": "timestamp → GPS coordinate interpolation"
+    },
+    {
+      "id": "P3.8",
+      "task": "Test full pipeline end-to-end",
+      "status": "not_started",
+      "phase": "P3",
+      "depends_on": ["P3.5"],
+      "notes": ""
+    },
+    {
+      "id": "P4.1",
+      "task": "Scaffold frontend project",
+      "status": "not_started",
+      "phase": "P4",
+      "depends_on": [],
+      "notes": ""
+    },
+    {
+      "id": "P4.2",
+      "task": "Build annotated video player",
+      "status": "not_started",
+      "phase": "P4",
+      "depends_on": ["P4.1"],
+      "notes": "HTML5 video + canvas overlay"
+    },
+    {
+      "id": "P4.3",
+      "task": "Build Google Maps hazard view",
+      "status": "not_started",
+      "phase": "P4",
+      "depends_on": ["P4.1"],
+      "notes": "Severity-coded circles on route"
+    },
+    {
+      "id": "P4.4",
+      "task": "Implement video-map synchronization",
+      "status": "not_started",
+      "phase": "P4",
+      "depends_on": ["P4.2", "P4.3"],
+      "notes": "Current position tracking, hazard pulsing/fading"
+    },
+    {
+      "id": "P4.5",
+      "task": "Build route summary card",
+      "status": "not_started",
+      "phase": "P4",
+      "depends_on": ["P4.1"],
+      "notes": ""
+    },
+    {
+      "id": "P4.6",
+      "task": "Implement voice alerts",
+      "status": "not_started",
+      "phase": "P4",
+      "depends_on": ["P4.4"],
+      "notes": "Web Speech API TTS"
+    },
+    {
+      "id": "P4.7",
+      "task": "Style and polish UI",
+      "status": "not_started",
+      "phase": "P4",
+      "depends_on": ["P4.2", "P4.3", "P4.4", "P4.5", "P4.6"],
+      "notes": "Dark theme, responsive layout"
+    },
+    {
+      "id": "P5.1",
+      "task": "Build Express server",
+      "status": "not_started",
+      "phase": "P5",
+      "depends_on": ["P4.1"],
+      "notes": "Serves frontend + cached data API"
+    },
+    {
+      "id": "P5.2",
+      "task": "Process demo footage through pipeline",
+      "status": "not_started",
+      "phase": "P5",
+      "depends_on": ["P3.8"],
+      "notes": "Bangalore route GoPro clip"
+    },
+    {
+      "id": "P5.3",
+      "task": "Build before/after demo flow",
+      "status": "not_started",
+      "phase": "P5",
+      "depends_on": ["P4.7", "P5.2"],
+      "notes": "Raw vs. annotated toggle"
+    },
+    {
+      "id": "P5.4",
+      "task": "End-to-end demo dry run",
+      "status": "not_started",
+      "phase": "P5",
+      "depends_on": ["P5.1", "P5.2", "P5.3"],
+      "notes": "Full walkthrough, fix sync/accuracy issues"
+    }
+  ]
+}

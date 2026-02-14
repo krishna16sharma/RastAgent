@@ -1,0 +1,228 @@
+{
+  "project": "RoadSense (RastAgent)",
+  "version": "0.1.0",
+  "description": "Road hazard intelligence from GoPro dashcam footage using Gemini 3 Pro",
+  "phases": [
+    {
+      "id": "P1",
+      "name": "Foundation & GPS Pipeline",
+      "steps": [
+        {
+          "id": "P1.1",
+          "task": "Initialize Node.js project with package.json",
+          "details": "Set up project with dependencies: gpmf-extract, gopro-telemetry, @google/generative-ai, dotenv, express",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P1.2",
+          "task": "Create .env template and .gitignore",
+          "details": "GEMINI_API_KEY, GOOGLE_MAPS_API_KEY. Gitignore: .env, cache/, data/, node_modules/",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P1.3",
+          "task": "Build GPS extraction CLI script",
+          "details": "Wrap utils/gopro-parser.js into pipeline/parse-gopro.js — accepts MP4 path, outputs GPS track JSON to cache/",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P1.4",
+          "task": "Implement GPS interpolation module",
+          "details": "Given a GPS track and a timestamp, return interpolated (lat, lng) via linear interpolation on cts values",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P1.5",
+          "task": "Test GPS pipeline with sample GoPro footage",
+          "details": "Verify extracted GPS track accuracy, plot on map for sanity check",
+          "status": "not_started",
+          "priority": "high"
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "name": "Video Chunking Pipeline",
+      "steps": [
+        {
+          "id": "P2.1",
+          "task": "Implement video chunking with overlap",
+          "details": "Extend chunkVideo() to support configurable overlap (default 3s). Output: chunks/ directory with metadata JSON mapping chunk index → start/end timestamps",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P2.2",
+          "task": "Create chunk metadata manifest",
+          "details": "Generate chunks_manifest.json: array of { chunkIndex, filePath, startSec, endSec, overlapSec }",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "id": "P2.3",
+          "task": "Validate chunk boundaries preserve telemetry",
+          "details": "Ensure GPMF stream is preserved in each chunk via -map 0:3. Test with gopro-parser on individual chunks",
+          "status": "not_started",
+          "priority": "high"
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "name": "Gemini Integration & Hazard Detection",
+      "steps": [
+        {
+          "id": "P3.1",
+          "task": "Write system prompt for RoadSense identity",
+          "details": "Save to prompts/system.md — establishes Indian road expertise, conservative detection bias, structured output requirements",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P3.2",
+          "task": "Write chunk analysis prompt template",
+          "details": "Save to prompts/chunk-analysis.md — per-segment hazard detection with JSON schema enforcement. Include hazard categories, severity scale, bounding box format, driver_action field",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P3.3",
+          "task": "Write route summary prompt template",
+          "details": "Save to prompts/route-summary.md — aggregated drive report: total hazards, quality score (1-10), worst segment, natural language briefing",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "id": "P3.4",
+          "task": "Build Gemini API client module",
+          "details": "pipeline/gemini-client.js — wraps @google/generative-ai SDK. Functions: analyzeChunk(videoPath, systemPrompt, chunkPrompt) → JSON, generateRouteSummary(hazards, gpsTrack) → JSON",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P3.5",
+          "task": "Build analysis orchestrator",
+          "details": "pipeline/analyze.js — reads chunk manifest, sends each chunk to Gemini sequentially, collects results, deduplicates, maps to GPS, generates route summary, writes cache/drive_<id>.json",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P3.6",
+          "task": "Implement hazard deduplication",
+          "details": "Merge overlapping detections from adjacent chunks using 100m GPS proximity radius + same hazard category. Keep highest severity + merge descriptions",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "id": "P3.7",
+          "task": "Implement GPS mapping for hazards",
+          "details": "Map each hazard's timestamp_offset_sec (relative to chunk start) back to absolute timestamp, then interpolate to GPS coordinates",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P3.8",
+          "task": "Test full pipeline end-to-end with sample footage",
+          "details": "Run on a real GoPro clip, verify JSON output, check GPS accuracy of mapped hazards",
+          "status": "not_started",
+          "priority": "high"
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "name": "Frontend — Split-Screen UI",
+      "steps": [
+        {
+          "id": "P4.1",
+          "task": "Scaffold frontend project",
+          "details": "frontend/ directory — HTML/JS SPA or React. Include Google Maps JS API script, set up dev server",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P4.2",
+          "task": "Build annotated video player (left panel)",
+          "details": "HTML5 video player with canvas overlay for bounding boxes, hazard labels, and driver advisory text. Read from cached annotations JSON",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P4.3",
+          "task": "Build Google Maps hazard view (right panel)",
+          "details": "Google Maps JS API showing driven route polyline + severity-coded circles (100m radius) at hazard GPS coordinates. Color scale: green(1) → yellow(2) → orange(3) → red(4) → dark red(5)",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P4.4",
+          "task": "Implement video-map synchronization",
+          "details": "As video plays, map tracks current position marker. Upcoming hazard zones pulse, past hazards fade to 30% opacity",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P4.5",
+          "task": "Build route summary card (bottom panel)",
+          "details": "Card showing: total hazard count, road quality score (1-10), worst segment name, hazard breakdown by category, natural language route briefing from Gemini",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "id": "P4.6",
+          "task": "Implement voice alerts via Web Speech API",
+          "details": "TTS announcements as video approaches each hazard: 'Pothole ahead — steer right'. Trigger at hazard timestamp minus 2 seconds. Queue and don't overlap",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "id": "P4.7",
+          "task": "Style and polish UI for demo",
+          "details": "Dark theme, clean layout, responsive split-screen. Smooth transitions, severity color consistency across all components",
+          "status": "not_started",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "name": "Demo & Integration",
+      "steps": [
+        {
+          "id": "P5.1",
+          "task": "Build Express server to serve frontend + cached data",
+          "details": "Simple Express app: serves frontend static files + API endpoints for cached annotation JSON and video files",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "id": "P5.2",
+          "task": "Process demo footage through full pipeline",
+          "details": "Run a Bangalore route GoPro clip through parse → chunk → analyze → cache. Verify output quality",
+          "status": "not_started",
+          "priority": "critical"
+        },
+        {
+          "id": "P5.3",
+          "task": "Build before/after demo flow",
+          "details": "UI toggle or page to show raw GoPro clip (no annotations) vs. RoadSense-processed version side by side",
+          "status": "not_started",
+          "priority": "medium"
+        },
+        {
+          "id": "P5.4",
+          "task": "End-to-end demo dry run",
+          "details": "Full walkthrough: raw video → RoadSense view → route summary. Fix any sync issues, verify voice alerts, check map accuracy",
+          "status": "not_started",
+          "priority": "critical"
+        }
+      ]
+    }
+  ],
+  "total_steps": 24,
+  "completed_steps": 0
+}
