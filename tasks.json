@@ -3,13 +3,13 @@
   "last_updated": "2026-02-14",
   "summary": {
     "total": 31,
-    "completed": 10,
+    "completed": 26,
     "in_progress": 0,
-    "not_started": 21,
+    "not_started": 5,
     "blocked": 0
   },
-  "current_phase": "P2",
-  "current_focus": "GoPro pipeline integration + Gemini prompt authoring",
+  "current_phase": "P5",
+  "current_focus": "Demo preparation — needs sample GoPro footage to run pipeline + dry run",
   "tasks": [
     {
       "id": "P1.1",
@@ -17,7 +17,7 @@
       "status": "done",
       "phase": "P1",
       "depends_on": [],
-      "notes": "googlemaps, mcp, python-dotenv, requests"
+      "notes": "googlemaps, google-generativeai, mcp, python-dotenv, requests, folium, flask"
     },
     {
       "id": "P1.2",
@@ -25,7 +25,7 @@
       "status": "done",
       "phase": "P1",
       "depends_on": [],
-      "notes": "GOOGLE_MAPS_API_KEY configured"
+      "notes": "GOOGLE_MAPS_API_KEY, GEMINI_API_KEY configured"
     },
     {
       "id": "P1.3",
@@ -33,7 +33,7 @@
       "status": "done",
       "phase": "P1",
       "depends_on": ["P1.1"],
-      "notes": "rast_agent/routing/google_maps_client.py — Directions API, mode mapping, simplified response"
+      "notes": "rast_agent/routing/google_maps_client.py"
     },
     {
       "id": "P1.4",
@@ -41,15 +41,15 @@
       "status": "done",
       "phase": "P1",
       "depends_on": ["P1.3"],
-      "notes": "rast_agent/overlay/route_matcher.py — polyline decode, nearest point, instruction lookup. Euclidean heuristic"
+      "notes": "rast_agent/overlay/route_matcher.py"
     },
     {
       "id": "P1.5",
-      "task": "Build MCP server with route + overlay tools",
+      "task": "Build MCP server with route + overlay + hazard tools",
       "status": "done",
       "phase": "P1",
       "depends_on": ["P1.3", "P1.4"],
-      "notes": "rast_agent/mcp_server/server.py — FastMCP, 2 tools: get_google_maps_route, analyze_route_coverage"
+      "notes": "rast_agent/mcp_server/server.py — 4 tools: get_google_maps_route, analyze_route_coverage, analyze_video, get_hazard_report"
     },
     {
       "id": "P1.6",
@@ -57,7 +57,7 @@
       "status": "done",
       "phase": "P1",
       "depends_on": ["P1.3"],
-      "notes": "tests/visualize_route.py → route_visualization.html (Leaflet/Folium)"
+      "notes": "tests/visualize_route.py → route_visualization.html"
     },
     {
       "id": "P1.7",
@@ -65,31 +65,31 @@
       "status": "done",
       "phase": "P1",
       "depends_on": ["P1.3", "P1.4", "P1.5"],
-      "notes": "5 test files: mock, live, MCP local, MCP overlay, overlay sim"
+      "notes": "5 test files"
     },
     {
       "id": "P2.1",
       "task": "Integrate GoPro parser into Python pipeline",
-      "status": "not_started",
+      "status": "done",
       "phase": "P2",
       "depends_on": ["P1.1"],
-      "notes": "Bridge Node.js gopro-parser.js with Python or rewrite in Python"
+      "notes": "rast_agent/gopro/parser.py — Node.js subprocess bridge"
     },
     {
       "id": "P2.2",
       "task": "Implement video chunking with configurable overlap",
-      "status": "not_started",
+      "status": "done",
       "phase": "P2",
       "depends_on": ["P2.1"],
-      "notes": "15-30s segments, 2-3s overlap, chunks_manifest.json output"
+      "notes": "rast_agent/gopro/chunker.py — ffmpeg stream copy, chunks_manifest.json"
     },
     {
       "id": "P2.3",
       "task": "Build GPS interpolation module",
-      "status": "not_started",
+      "status": "done",
       "phase": "P2",
       "depends_on": ["P2.1"],
-      "notes": "Linear interpolation on GPS track timestamps"
+      "notes": "rast_agent/gopro/gps_interpolator.py — bisect-based linear interpolation"
     },
     {
       "id": "P2.4",
@@ -97,7 +97,7 @@
       "status": "not_started",
       "phase": "P2",
       "depends_on": ["P2.1", "P2.2", "P2.3"],
-      "notes": ""
+      "notes": "Requires sample GoPro MP4 file"
     },
     {
       "id": "P3.1",
@@ -105,7 +105,7 @@
       "status": "done",
       "phase": "P3",
       "depends_on": [],
-      "notes": "prompts/system_prompt.md — DUMMY placeholder, awaiting optimized prompt from user"
+      "notes": "prompts/system_prompt.md"
     },
     {
       "id": "P3.2",
@@ -113,7 +113,7 @@
       "status": "done",
       "phase": "P3",
       "depends_on": [],
-      "notes": "prompts/chunk_analysis_prompt.md — LIVE optimized prompt from json_prompt/prompt.md. Returns JSON array, 7 categories, conservative detection"
+      "notes": "prompts/chunk_analysis_prompt.md"
     },
     {
       "id": "P3.3",
@@ -121,47 +121,47 @@
       "status": "done",
       "phase": "P3",
       "depends_on": [],
-      "notes": "prompts/route_summary_prompt.md — DUMMY placeholder, awaiting optimized prompt from user"
+      "notes": "prompts/route_summary_prompt.md"
     },
     {
       "id": "P3.4",
       "task": "Build Gemini API client module",
-      "status": "not_started",
+      "status": "done",
       "phase": "P3",
       "depends_on": ["P1.1", "P3.1", "P3.2"],
-      "notes": "rast_agent/analysis/gemini_client.py"
+      "notes": "rast_agent/analysis/gemini_client.py — video upload, JSON mode"
     },
     {
       "id": "P3.5",
       "task": "Build analysis orchestrator",
-      "status": "not_started",
+      "status": "done",
       "phase": "P3",
       "depends_on": ["P3.4", "P2.2", "P2.3", "P3.6", "P3.7"],
-      "notes": "rast_agent/analysis/pipeline.py"
+      "notes": "rast_agent/analysis/pipeline.py — full 6-step pipeline"
     },
     {
       "id": "P3.6",
       "task": "Implement hazard deduplication",
-      "status": "not_started",
+      "status": "done",
       "phase": "P3",
       "depends_on": ["P2.3"],
-      "notes": "100m GPS proximity + same category"
+      "notes": "rast_agent/analysis/deduplicator.py — Haversine, 100m proximity"
     },
     {
       "id": "P3.7",
       "task": "Implement GPS coordinate mapping for hazards",
-      "status": "not_started",
+      "status": "done",
       "phase": "P3",
       "depends_on": ["P2.3"],
-      "notes": "timestamp → GPS interpolation"
+      "notes": "rast_agent/analysis/gps_mapper.py"
     },
     {
       "id": "P3.8",
       "task": "Add Gemini hazard tools to MCP server",
-      "status": "not_started",
+      "status": "done",
       "phase": "P3",
       "depends_on": ["P3.5"],
-      "notes": "analyze_video + get_hazard_report MCP tools"
+      "notes": "analyze_video + get_hazard_report tools"
     },
     {
       "id": "P3.9",
@@ -169,71 +169,71 @@
       "status": "not_started",
       "phase": "P3",
       "depends_on": ["P3.5"],
-      "notes": ""
+      "notes": "Requires sample GoPro footage + GEMINI_API_KEY"
     },
     {
       "id": "P4.1",
       "task": "Scaffold frontend project",
-      "status": "not_started",
+      "status": "done",
       "phase": "P4",
       "depends_on": [],
-      "notes": ""
+      "notes": "frontend/ — HTML/CSS/JS SPA, Flask server"
     },
     {
       "id": "P4.2",
       "task": "Build annotated video player",
-      "status": "not_started",
+      "status": "done",
       "phase": "P4",
       "depends_on": ["P4.1"],
-      "notes": "HTML5 video + canvas bounding box overlay"
+      "notes": "HTML5 video + canvas bounding box overlay + advisory banner"
     },
     {
       "id": "P4.3",
       "task": "Build Google Maps hazard view",
-      "status": "not_started",
+      "status": "done",
       "phase": "P4",
       "depends_on": ["P4.1"],
-      "notes": "Severity-coded circles on route polyline"
+      "notes": "Severity-coded circles, dark map style, GPS track polyline"
     },
     {
       "id": "P4.4",
       "task": "Implement video-map synchronization",
-      "status": "not_started",
+      "status": "done",
       "phase": "P4",
       "depends_on": ["P4.2", "P4.3"],
-      "notes": "Position tracking, hazard pulse/fade"
+      "notes": "Position arrow tracks video, hazard pulse/fade on proximity"
     },
     {
       "id": "P4.5",
       "task": "Build route summary card",
-      "status": "not_started",
+      "status": "done",
       "phase": "P4",
       "depends_on": ["P4.1"],
-      "notes": ""
+      "notes": "Quality score, hazard count, severity bars, category tags, briefing"
     },
     {
       "id": "P4.6",
       "task": "Implement voice alerts",
-      "status": "not_started",
+      "status": "done",
       "phase": "P4",
       "depends_on": ["P4.4"],
-      "notes": "Web Speech API TTS"
+      "notes": "Web Speech API TTS, 2s pre-alert, no overlap"
     },
     {
       "id": "P4.7",
       "task": "Style and polish UI",
-      "status": "not_started",
+      "status": "done",
       "phase": "P4",
       "depends_on": ["P4.2", "P4.3", "P4.4", "P4.5", "P4.6"],
-      "notes": "Dark theme, responsive"
+      "notes": "Dark theme, responsive split-screen, severity color consistency"
     },
     {
       "id": "P5.1",
       "task": "Build server to serve frontend + cached data",
-      "status": "not_started",
+      "status": "done",
       "phase": "P5",
       "depends_on": ["P4.1"],
-      "notes": "Express or Flask"
+      "notes": "server.py — Flask, serves static + API endpoints for reports/video/config"
     },
     {
       "id": "P5.2",
@@ -241,15 +241,15 @@
       "status": "not_started",
       "phase": "P5",
       "depends_on": ["P3.9"],
-      "notes": "Bangalore route GoPro clip"
+      "notes": "Requires Bangalore route GoPro clip"
     },
     {
       "id": "P5.3",
       "task": "Build before/after demo flow",
-      "status": "not_started",
+      "status": "done",
       "phase": "P5",
       "depends_on": ["P4.7", "P5.2"],
-      "notes": "Raw vs. annotated toggle"
+      "notes": "Toggle raw/annotated via 'Show Raw Video' button in header"
     },
     {
       "id": "P5.4",

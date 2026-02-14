@@ -1,4 +1,7 @@
 googlemaps
+google-generativeai
 mcp
 python-dotenv
 requests
+folium
+flask

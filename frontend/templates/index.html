@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoadSense — Road Hazard Intelligence</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script async defer id="gmaps-script"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="logo-icon">&#x1F6E3;</span>
+            <h1>RoadSense</h1>
+        </div>
+        <div class="header-controls">
+            <select id="report-select">
+                <option value="">Select a drive report...</option>
+            </select>
+            <button id="toggle-raw" class="btn btn-outline" style="display:none;">Show Raw Video</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Top split: Video + Map -->
+        <div class="split-panel">
+            <!-- Left: Video Player with Annotation Overlay -->
+            <div class="panel video-panel">
+                <div class="panel-header">Dashcam Feed</div>
+                <div class="video-container" id="video-container">
+                    <video id="video-player" controls preload="metadata">
+                        <source src="" type="video/mp4">
+                    </video>
+                    <canvas id="annotation-canvas"></canvas>
+                    <div id="advisory-banner" class="advisory-banner hidden"></div>
+                </div>
+            </div>
+
+            <!-- Right: Google Maps -->
+            <div class="panel map-panel">
+                <div class="panel-header">Hazard Map</div>
+                <div id="map" class="map-container"></div>
+            </div>
+        </div>
+
+        <!-- Bottom: Route Summary Card -->
+        <div class="summary-panel" id="summary-panel" style="display:none;">
+            <div class="summary-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="quality-score">-</div>
+                    <div class="stat-label">Road Quality</div>
+                    <div class="stat-sub">/10</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-hazards">0</div>
+                    <div class="stat-label">Hazards</div>
+                </div>
+                <div class="stat-card severity-breakdown" id="severity-breakdown">
+                    <div class="stat-label">Severity</div>
+                    <div class="severity-bars" id="severity-bars"></div>
+                </div>
+                <div class="stat-card category-breakdown" id="category-breakdown">
+                    <div class="stat-label">Categories</div>
+                    <div class="category-list" id="category-list"></div>
+                </div>
+            </div>
+            <div class="route-briefing" id="route-briefing"></div>
+            <div class="worst-segment" id="worst-segment" style="display:none;">
+                <strong>Worst Segment:</strong> <span id="worst-segment-text"></span>
+            </div>
+        </div>
+
+        <!-- Loading state -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <p>Loading report...</p>
+        </div>
+    </main>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

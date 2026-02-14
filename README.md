@@ -1,64 +1,116 @@
-# RastAgent Route Planner
+# RoadSense — Road Hazard Intelligence for Indian Navigation
 
-A Python-based agent for route planning and overlay analysis using Google Maps and MCP (Model Context Protocol).
+Road hazard detection from GoPro dashcam footage using Gemini 3 Pro multimodal analysis + Google Maps route planning.
 
-## Project Overview
+## Quick Start
 
-This tool allows you to:
-1.  **Plan Routes**: Fetch optimized routes between two locations using the Google Maps API.
-2.  **Analyze Coverage**: Match GPS traces (e.g., from dashcam footage) against a planned route to identify navigation instructions for specific video timestamps.
-3.  **Serve via MCP**: Expose these capabilities as tools for an AI agent via the Model Context Protocol.
+### Prerequisites
 
-## Prerequisites
+- Python 3.10+
+- Node.js 16+ (for GoPro telemetry parsing)
+- ffmpeg, ffprobe (for video processing)
+- Google Maps API key
+- Gemini API key
 
-- **Python**: Version 3.10+ (Tested on 3.14.2)
-- **Google Maps API Key**: You need a valid API key with the **Directions API** enabled.
+### Setup
 
-## Setup
+1. **Clone and install Python dependencies:**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
 
-1.  **Clone the repository**:
-    ```bash
-    git clone <repository-url>
-    cd RastAgent
-    ```
+2. **Install Node.js dependencies (for GoPro parser):**
+   ```bash
+   cd utils
+   npm install
+   cd ..
+   ```
 
-2.  **Create a Virtual Environment**:
-    ```bash
-    python3 -m venv .venv
-    source .venv/bin/activate
-    ```
+3. **Configure environment variables:**
+   ```bash
+   # .env file created with template
+   # Add your API keys:
+   GOOGLE_MAPS_API_KEY=your_key_here
+   GEMINI_API_KEY=your_key_here
+   ```
 
-3.  **Install Dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
+### Running the App
 
-4.  **Configuration**:
-    Create a `.env` file in the root directory and add your Google Maps API key:
-    ```bash
-    GOOGLE_MAPS_API_KEY=your_api_key_here
-    ```
-
-## Usage
-
-### Running the MCP Server
-To start the FastMCP server which exposes the routing tools:
-
+**Start the Flask server:**
 ```bash
-python3 rast_agent/mcp_server/server.py
+python server.py
 ```
-This will start the server, allowing MCP clients (like Claude Desktop or other agents) to connect and use the `get_google_maps_route` and `analyze_route_coverage` tools.
 
-### Running Tests
-To verify the routing logic (using mocks, so no API usage):
+Open http://localhost:5000 in your browser.
 
-```bash
-python3 -m unittest tests/test_router_mock.py
+### Workflow: Analyze a GoPro Video
+
+1. Place your GoPro MP4 in `data/` directory
+2. Run: `python -m rast_agent.analysis.pipeline <path_to_video.mp4>`
+3. Select report from UI dropdown to view cached results
+
+## Architecture
+
+```
+GoPro MP4 → GPS extract → Chunk → Gemini analyze → Map GPS → Dedup → Summary → Cache → UI
 ```
 
 ## Project Structure
 
-- `rast_agent/routing/`: Contains the `GoogleMapsRouter` client.
-- `rast_agent/overlay/`: Contains the `RouteMatcher` logic for aligning GPS traces to routes.
-- `rast_agent/mcp_server/`: Contains the FastMCP server implementation (`server.py`).
-- `route_planning_pipeline.md`: Detailed documentation of the internal workflow.
+```
+/
+├── .env                           # Environment variables
+├── .gitignore                     # Secrets, cache, venv
+├── README.md                      # This file
+├── requirements.txt               # Python deps
+├── server.py                      # Flask server
+├── rast_agent/
+│   ├── routing/                   # Google Maps integration
+│   ├── overlay/                   # Route matching
+│   ├── gopro/                     # GoPro pipeline (parser, chunker, interpolator)
+│   ├── analysis/                  # Gemini client, pipeline, dedup, mapping
+│   └── mcp_server/                # FastMCP tools
+├── prompts/                       # Gemini prompt templates
+├── frontend/                      # SPA (HTML/CSS/JS)
+├── cache/                         # Cached results
+├── data/                          # Sample videos
+└── tests/                         # Test suite
+```
+
+## Hazard Categories
+
+POTHOLE, SPEED_BREAKER, PEDESTRIAN_ZONE, OVERHEAD_OBSTRUCTION, ROAD_WORK, SHARP_CURVE, SURFACE_CHANGE
+
+## Severity: 1=LOW (🟢) to 5=CRITICAL (🔴)
+
+## Key Features
+
+✅ Passive detection from dashcam
+✅ Gemini 3 Pro multimodal analysis
+✅ Real-time video-map sync + voice alerts
+✅ Split-screen annotated UI
+✅ Cached results for replay
+✅ MCP server for agent integration
+
+## API Endpoints
+
+- `GET /` — SPA
+- `GET /api/reports` — List reports
+- `GET /api/report/<file>` — Fetch report
+- `GET /api/video/<path>` — Serve video
+- `GET /api/config` — Frontend config
+
+## MCP Tools
+
+```python
+# analyze_video(video_path, chunk_duration, chunk_overlap) → hazards + summary
+# get_hazard_report(cache_path) → cached results
+# get_google_maps_route(origin, destination, mode) → route
+# analyze_route_coverage(origin, destination, gps_trace) → annotated trace
+```
+
+## Cost
+
+~$0.50/min for Gemini 3 Pro video = ~$5 for 10-min drive

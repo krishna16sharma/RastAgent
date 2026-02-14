@@ -1,5 +1,6 @@
 from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
+import json
 import os
 import sys
 
@@ -8,13 +9,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 
 from rast_agent.routing.google_maps_client import GoogleMapsRouter
 from rast_agent.overlay.route_matcher import RouteMatcher
-from typing import List, Dict
+from rast_agent.analysis.pipeline import run_pipeline
+from typing import List, Dict, Optional
 
 # Load environment variables
 load_dotenv()
 
 # Initialize FastMCP server
-mcp = FastMCP("rast-agent-router")
+mcp = FastMCP("rast-agent")
 
 @mcp.tool()
 def get_google_maps_route(origin: str, destination: str, mode: str = "driving") -> str:
@@ -88,6 +90,69 @@ def analyze_route_coverage(origin: str, destination: str, gps_trace: List[Dict[s
         return f"Error analyzing coverage: {str(e)}"
 
 
+@mcp.tool()
+def analyze_video(
+    video_path: str,
+    chunk_duration: int = 20,
+    chunk_overlap: int = 3,
+) -> str:
+    """
+    Analyze a GoPro dashcam video for road hazards using Gemini.
+
+    Runs the full pipeline: GPS extraction, video chunking, Gemini analysis,
+    GPS mapping, deduplication, and route summary generation.
+
+    Args:
+        video_path: Absolute path to the GoPro MP4 file.
+        chunk_duration: Duration of each video chunk in seconds (default 20).
+        chunk_overlap: Overlap between chunks in seconds (default 3).
+
+    Returns:
+        JSON string with hazards, summary, and metadata.
+    """
+    try:
+        results = run_pipeline(
+            video_path,
+            chunk_duration=chunk_duration,
+            chunk_overlap=chunk_overlap,
+        )
+        return json.dumps({
+            "hazards": results["hazards"],
+            "summary": results["summary"],
+            "total_hazards": len(results["hazards"]),
+            "cache_path": results.get("cache_path"),
+        }, default=str)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
+
+@mcp.tool()
+def get_hazard_report(cache_path: str) -> str:
+    """
+    Retrieve a previously generated hazard report from cache.
+
+    Args:
+        cache_path: Path to the cached results JSON file.
+
+    Returns:
+        JSON string with hazards and route summary.
+    """
+    try:
+        if not os.path.isfile(cache_path):
+            return json.dumps({"error": f"Cache file not found: {cache_path}"})
+
+        with open(cache_path) as f:
+            data = json.load(f)
+
+        return json.dumps({
+            "hazards": data.get("hazards", []),
+            "summary": data.get("summary", {}),
+            "total_hazards": len(data.get("hazards", [])),
+            "video": data.get("video"),
+        }, default=str)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
+
 if __name__ == "__main__":
-    # This entry point allows running the server directly
     mcp.run()
