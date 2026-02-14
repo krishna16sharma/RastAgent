@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_4aced8b5236a4f33dc7ade52fee1e7c4 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_4aced8b5236a4f33dc7ade52fee1e7c4" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_4aced8b5236a4f33dc7ade52fee1e7c4 = L.map(
+                "map_4aced8b5236a4f33dc7ade52fee1e7c4",
+                {
+                    center: [12.972280000000001, 77.66328],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_1feb7f28b0652b1fda0a2527842d8717 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_1feb7f28b0652b1fda0a2527842d8717.addTo(map_4aced8b5236a4f33dc7ade52fee1e7c4);
+        
+    
+            var poly_line_7d1221e2d96ea5d8a0f1a11fcf24b4f1 = L.polyline(
+                [[12.972280000000001, 77.66328], [12.9723, 77.66389000000001], [12.972290000000001, 77.66417000000001], [12.972370000000002, 77.66417000000001], [12.97239, 77.66449], [12.97244, 77.66547000000001], [12.97245, 77.66555000000001], [12.972550000000002, 77.66554000000001], [12.97277, 77.66555000000001], [12.972940000000001, 77.66557], [12.97347, 77.6657], [12.97381, 77.66575], [12.974240000000002, 77.66578000000001], [12.97442, 77.66579], [12.975050000000001, 77.66584], [12.97507, 77.66589], [12.975100000000001, 77.66601], [12.975240000000001, 77.66634], [12.975380000000001, 77.66663000000001], [12.975480000000001, 77.66694000000001], [12.975470000000001, 77.66698000000001], [12.975510000000002, 77.66720000000001], [12.975520000000001, 77.66743000000001], [12.975510000000002, 77.66774000000001], [12.97544, 77.66852], [12.975370000000002, 77.66885], [12.975140000000001, 77.66942], [12.97511, 77.66959], [12.974900000000002, 77.67016000000001], [12.97488, 77.67018], [12.974820000000001, 77.67025000000001], [12.97441, 77.67163000000001], [12.97389, 77.67319], [12.97356, 77.67422], [12.973410000000001, 77.67477000000001], [12.973320000000001, 77.67517000000001], [12.97287, 77.67720000000001], [12.972800000000001, 77.67755000000001], [12.972830000000002, 77.67763000000001], [12.972800000000001, 77.67782000000001], [12.97282, 77.67790000000001], [12.97277, 77.6781], [12.97272, 77.67832], [12.97258, 77.67890000000001], [12.972380000000001, 77.67967], [12.972030000000002, 77.68085], [12.971800000000002, 77.68162000000001], [12.97178, 77.68168], [12.9717, 77.68176000000001], [12.971530000000001, 77.68181000000001], [12.971160000000001, 77.68185000000001], [12.970870000000001, 77.68188], [12.970640000000001, 77.68192], [12.970440000000002, 77.68201], [12.969850000000001, 77.68235], [12.96962, 77.68247000000001], [12.96948, 77.68251000000001], [12.969410000000002, 77.68253], [12.96939, 77.68276], [12.96935, 77.68312], [12.9693, 77.68337000000001], [12.969230000000001, 77.68376], [12.96916, 77.68418000000001], [12.969140000000001, 77.68432], [12.969090000000001, 77.68443], [12.96902, 77.68459], [12.968950000000001, 77.68481000000001], [12.968910000000001, 77.68502000000001], [12.96868, 77.68588000000001], [12.968610000000002, 77.68586], [12.9686, 77.68591], [12.968430000000001, 77.68645000000001], [12.96836, 77.68651000000001], [12.96831, 77.68665], [12.968160000000001, 77.68660000000001], [12.96804, 77.68659000000001], [12.96799, 77.68663000000001], [12.967910000000002, 77.68665], [12.967270000000001, 77.68669000000001], [12.96729, 77.68688], [12.967300000000002, 77.68697], [12.967550000000001, 77.68694], [12.967970000000001, 77.68692], [12.968140000000002, 77.68690000000001], [12.968280000000002, 77.68694], [12.968700000000002, 77.68706], [12.96893, 77.68713000000001], [12.968910000000001, 77.6872], [12.968860000000001, 77.68748000000001], [12.968840000000002, 77.68763000000001], [12.968800000000002, 77.68807000000001], [12.96878, 77.68845], [12.96874, 77.6889], [12.968800000000002, 77.68894], [12.969240000000001, 77.68902], [12.969190000000001, 77.68934], [12.969180000000001, 77.68976], [12.96916, 77.69123], [12.96911, 77.69168], [12.969050000000001, 77.69232000000001], [12.969000000000001, 77.69284], [12.968950000000001, 77.69305], [12.968940000000002, 77.69309000000001], [12.96887, 77.69307], [12.96865, 77.69302], [12.96864, 77.69305], [12.968520000000002, 77.69349000000001], [12.968340000000001, 77.69345000000001], [12.968090000000002, 77.69341], [12.96803, 77.69342], [12.968010000000001, 77.69357000000001], [12.967880000000001, 77.6944], [12.96775, 77.69507], [12.967480000000002, 77.6962], [12.96742, 77.6965], [12.96746, 77.69685000000001], [12.967620000000002, 77.69803], [12.9677, 77.69879], [12.967810000000002, 77.69940000000001], [12.967870000000001, 77.69984000000001], [12.967960000000001, 77.70056000000001], [12.96807, 77.70133000000001], [12.968150000000001, 77.70153], [12.968050000000002, 77.70158], [12.96799, 77.70162], [12.96766, 77.70175], [12.96732, 77.70189], [12.96737, 77.70206], [12.967400000000001, 77.70214], [12.967360000000001, 77.70216], [12.966940000000001, 77.70226000000001], [12.966410000000002, 77.70231000000001], [12.965890000000002, 77.70230000000001], [12.965100000000001, 77.70223], [12.96423, 77.70214], [12.96343, 77.70204000000001], [12.96343, 77.70205]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(map_4aced8b5236a4f33dc7ade52fee1e7c4);
+        
+    
+            poly_line_7d1221e2d96ea5d8a0f1a11fcf24b4f1.bindTooltip(
+                `<div>
+                     Google Maps Route
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_d78c27f0af8ef32f41fbd5a4b42263fc = L.marker(
+                [12.972280000000001, 77.66328],
+                {
+}
+            ).addTo(map_4aced8b5236a4f33dc7ade52fee1e7c4);
+        
+    
+            var icon_ab677bf8324e3a5f7226185ee391da6d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f95ec169a51b5e4a154fbdcbd6e2fe7f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ae0950a20c7cd395c7a8e98611b2a187 = $(`<div id="html_ae0950a20c7cd395c7a8e98611b2a187" style="width: 100.0%; height: 100.0%;">Start: KG Colony, GM Palya, C V Raman Nagar, Bangalore</div>`)[0];
+                popup_f95ec169a51b5e4a154fbdcbd6e2fe7f.setContent(html_ae0950a20c7cd395c7a8e98611b2a187);
+            
+        
+
+        marker_d78c27f0af8ef32f41fbd5a4b42263fc.bindPopup(popup_f95ec169a51b5e4a154fbdcbd6e2fe7f)
+        ;
+
+        
+    
+    
+                marker_d78c27f0af8ef32f41fbd5a4b42263fc.setIcon(icon_ab677bf8324e3a5f7226185ee391da6d);
+            
+    
+            var marker_1b75ab58f558b380ed431e890639b238 = L.marker(
+                [12.96343, 77.70205],
+                {
+}
+            ).addTo(map_4aced8b5236a4f33dc7ade52fee1e7c4);
+        
+    
+            var icon_09388ee5776a915ff1ba9fe06ca10c75 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f22bf9b06b33eeccaea82eabdf310da7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_30b7fe48fbbc99c9205c856645cbe4e3 = $(`<div id="html_30b7fe48fbbc99c9205c856645cbe4e3" style="width: 100.0%; height: 100.0%;">End: WeWork Roshni Tech Hub, Marathahalli, Bangalore</div>`)[0];
+                popup_f22bf9b06b33eeccaea82eabdf310da7.setContent(html_30b7fe48fbbc99c9205c856645cbe4e3);
+            
+        
+
+        marker_1b75ab58f558b380ed431e890639b238.bindPopup(popup_f22bf9b06b33eeccaea82eabdf310da7)
+        ;
+
+        
+    
+    
+                marker_1b75ab58f558b380ed431e890639b238.setIcon(icon_09388ee5776a915ff1ba9fe06ca10c75);
+            
+</script>
+</html>
