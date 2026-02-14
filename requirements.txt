@@ -1,0 +1,4 @@
+googlemaps
+mcp
+python-dotenv
+requests
