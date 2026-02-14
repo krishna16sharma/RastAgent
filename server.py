@@ -17,14 +17,15 @@ app = Flask(
     template_folder="frontend/templates",
 )
 
-CACHE_DIR = Path(__file__).parent / "cache"
-DATA_DIR = Path(__file__).parent / "data"
-TEST_DIR = Path(__file__).parent / "test"
+BASE_DIR = Path(__file__).resolve().parent
+CACHE_DIR = BASE_DIR / "cache"
+DATA_DIR = BASE_DIR / "data"
+TEST_DIR = BASE_DIR / "test"
 
 
 @app.route("/")
 def index():
-    return send_file("frontend/templates/index.html")
+    return send_from_directory(str(BASE_DIR / "frontend" / "templates"), "index.html")
 
 
 @app.route("/api/reports")
@@ -50,10 +51,10 @@ def list_reports():
 @app.route("/api/report/<filename>")
 def get_report(filename):
     """Get a specific analysis report."""
-    path = CACHE_DIR / filename
+    path = (CACHE_DIR / filename).resolve()
     if not path.exists() or not path.is_file():
         abort(404)
-    return send_file(path, mimetype="application/json")
+    return send_file(str(path), mimetype="application/json")
 
 
 @app.route("/api/video/<path:filename>")
@@ -76,4 +77,4 @@ def get_config():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8080)

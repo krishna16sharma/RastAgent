@@ -127,6 +127,14 @@ async function loadReport(filename) {
         if (videoName) {
             const video = document.getElementById('video-player');
             video.src = `/api/video/${videoName}`;
+
+            // Auto-seek to GPS start if available
+            const gpsStartSec = reportData.gps_start_sec || 0;
+            if (gpsStartSec > 0) {
+                video.addEventListener('loadedmetadata', () => {
+                    video.currentTime = gpsStartSec;
+                }, { once: true });
+            }
         }
 
         // Update map
