@@ -2,3 +2,4 @@ googlemaps
 mcp
 python-dotenv
 requests
+google-generativeai
